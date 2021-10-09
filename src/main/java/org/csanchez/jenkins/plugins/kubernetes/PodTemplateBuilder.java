@@ -179,6 +179,11 @@ public class PodTemplateBuilder {
 
                 if (volume instanceof ConfigMapVolume) {
                     final ConfigMapVolume configmapVolume = (ConfigMapVolume) volume;
+                    //We need to check if subpath is null comming from older plugin version.
+                    if (configmapVolume.getSubPath() == null ) {
+                        LOGGER.warning("Kubernetes-plugin: subPath Not set in config.xml Setting empty String instead of null:");
+                        configmapVolume.setSubPath("");
+                    }
                     //We need to normalize the subPath or we can end up in really hard to debug issues Just in case.
                     final String subPath = substituteEnv(Paths.get(configmapVolume.getSubPath()).normalize().toString().replace("\\", "/"));
                     volumeMountBuilder = volumeMountBuilder.withSubPath(subPath);
